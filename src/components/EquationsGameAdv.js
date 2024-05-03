@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 
 function EquationsAdv({ navigateTo }) {
-  const [equations, setEquations] = useState([]);
+  const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);
-  const [showHints, setShowHints] = useState([]);
+  const [showHints, setShowHints] = useState(false);
   const [time, setTime] = useState(0);
   const [timerRunning, setTimerRunning] = useState(false);
 
   // Sample equations
-  const sampleEquations = [
+  const sampleQuestions = [
     { id: 1, equation: 'What is 3 x 2?', answer: '6' },
     { id: 2, equation: 'What is 3 ÷ 1?', answer: '3' },
     { id: 3, equation: 'What is 6 x 2?', answer: '12' },
@@ -17,9 +17,8 @@ function EquationsAdv({ navigateTo }) {
   ];
 
   useEffect(() => {
-    setEquations(sampleEquations);
-    setAnswers(new Array(sampleEquations.length).fill(''));
-    setShowHints(new Array(sampleEquations.length).fill(false));
+    setQuestions(sampleQuestions);
+    setAnswers(new Array(sampleQuestions.length).fill(''));
     startTimer();
   }, []);
 
@@ -40,19 +39,20 @@ function EquationsAdv({ navigateTo }) {
     const newAnswers = [...answers];
     newAnswers[index] = e.target.value;
     setAnswers(newAnswers);
+    console.log(answers)
   };
 
   const handleHintClick = (index) => {
-    const newShowHints = [...showHints];
-    newShowHints[index] = true;
-    setShowHints(newShowHints);
+    localStorage.setItem('isHint', true);
+    setShowHints(!showHints);
   };
 
   const checkAnswer = () => {
     let marks = 0;
-    equations.forEach((eq, index) => {
-      if (String(answers[index]) === String(eq.answer)) {
-        marks += 1;
+    const cleanedAnswers = answers.map(answer => answer.replace(/\s/g, '').toLowerCase());
+    questions.map((q, index) => {
+      if (String(cleanedAnswers[index]).toLowerCase() === String(questions[index].answer).toLowerCase()) {
+        marks+=1;
       }
     });
     terminate(marks);
@@ -75,88 +75,85 @@ function EquationsAdv({ navigateTo }) {
       newPoints = 0;
     }
     localStorage.setItem('points', newPoints);
-    localStorage.setItem('time', time);
+    localStorage.setItem('time', time)
     navigateTo('feedback-screen');
-  };
+  }
 
   const buttonStyle = {
     fontSize: '14px',
-    backgroundColor: '#FFD700',
+    backgroundColor: '#060c42',
+    color: '#fff',
     padding: '5px 10px',
     borderRadius: '5px',
     cursor: 'pointer',
     marginLeft: '10px'
   };
 
-  const pageStyle = {
-    backgroundColor: '#205d76',
-    minHeight: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-  };
-
   const containerStyle = {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center', 
-    padding: '30px',
-    width: 'calc(100vw - 300px)',
-    height: 'calc(100vh - 300px)',
-    fontFamily: 'Comic Sans MS, cursive',
-    background: 'linear-gradient(45deg, #060c42, #ffa09e)',
-    borderRadius: '10px',
+    padding: '10px',
     margin: 'auto',
-    boxShadow: '0px 15px 30px rgba(0, 0, 0, 0.8)',
+    width: 'calc(100vw - 800px)',
+    height: 'calc(100vh - 200px)',
+    fontFamily: 'Comic Sans MS, cursive',
+    borderRadius: '10px',
+    boxShadow: '0px 15px 30px rgba(0, 0, 0, 0.6)'
   };
   
   const innerDivStyle = {
     display: 'flex',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    justifyContent: 'center', 
+    flexDirection: 'column',
+    justifyContent: 'left', 
   };
 
   const inputStyle = {
     height: 'calc(1.8vw)',
-    width: 'calc(4.2vw)',
+    width: 'calc(8.2vw)',
     marginRight: '10px',
-    marginLeft: '10px',
-    background: 'linear-gradient(to right, #53b2cf, #73917f)',
+    marginLeft: '30px',
+    background: 'transparent',
     border: '1.5px solid #111',
-    borderRadius: '5px',
+    borderRadius: '3px',
     boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.1)',
     textAlign: 'center',
   };
 
   const hintButtonStyle = {
-    ...buttonStyle,
-    fontSize: '12px',
-    marginRight: '10px',
-    backgroundColor: '#04d627',
+    fontSize: '14px',
+    fontWeight: 600,
+    padding: '5px 10px',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    backgroundColor: 'transparent',
+    marginLeft: '300px',
+    color: '#060c42',
   };
 
   return (
-    <div style={pageStyle}>
       <div style={containerStyle}>
-			<h2 style={{color: '#ddd', fontSize: 30,}}>Equations Game - Level 2</h2>
-        <p style={{ fontSize: 20, fontWeight: 900, marginTop: '-20px' }}>Solve the equations below:</p>
+        <h2 style={{color: '#000', fontSize: 30, alignSelf: 'center', marginTop: '10px'}}>Number Sense Game - Level 2</h2>
+        <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: '-30px'}}>
+          <p style={{fontSize: 20, fontWeight: 900, marginLeft: '20px'}}>Write the numbers in the words</p>
+          <button onClick={() => handleHintClick()} style={hintButtonStyle}>Hint !</button>
+        </div>
+        
         <div style={innerDivStyle}>
-          {equations.map((eq, index) => (
-            <div key={eq.id} style={{ display: 'flex', alignItems: 'center', margin: '0px 30px 30px' }}>
-              <p style={{ fontSize: 18, fontWeight: 900 }}>{eq.equation}</p>
+          {questions.map((question, index) => (
+            <div key={question.id} style={{ display: 'flex', alignItems: 'center', marginLeft: '60px' }}>
+              <p style={{fontSize: 18, fontWeight: 900}}>{index+1}. {question.equation}</p>
               <input type="text" value={answers[index]} onChange={(e) => handleAnswerChange(e, index)} style={inputStyle} />
-              <button onClick={() => handleHintClick(index)} style={hintButtonStyle}>Hint !</button>
-              {showHints[index] && <p>{eq.answer}</p>}
+              {/* <button onClick={() => checkAnswer(index)} style={buttonStyle}>Done</button> */}
+              {showHints && <p>{question.answer}</p>}
             </div>
           ))}
         </div>
-        <button onClick={endGame} style={buttonStyle}>End Game</button>
-        <p>Time: {time} seconds</p>
+        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center',}}>
+          <button onClick={endGame} style={buttonStyle} onMouseEnter={(e) => e.target.style.backgroundColor = '#FFC107'}
+          onMouseLeave={(e) => e.target.style.backgroundColor = '#060c42'}>Done</button>
+          <p>Time: {time} seconds</p>
+        </div>
       </div>
-    </div>
   );
 }
 

@@ -8,29 +8,17 @@ const containerStyle = {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  justifyContent: 'center',
   padding: '30px',
+  margin: 'auto',
   width: 'calc(100vw - 300px)',
   height: 'calc(100vh - 300px)',
   fontFamily: 'Comic Sans MS, cursive',
-  background: 'linear-gradient(45deg, #060c42, #ffa09e)',
   borderRadius: '10px',
-  margin: 'auto',
-  boxShadow: '0px 15px 30px rgba(0, 0, 0, 0.8)',
-};
-
-const pageStyle = {
-  backgroundColor: '#205d76',
-  minHeight: '100vh',
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
 };
 
 const headingStyle = {
   fontSize: 'calc(7vmin)',
-  color: '#fff',
+  color: '#000',
 };
 
 const buttonColors = ['#FFA07A', '#87CEEB', '#98FB98'];
@@ -55,21 +43,22 @@ function CategorySelection({ navigateTo }) {
     width: '200px',
     height: '200px',
     position: 'relative',
-    cursor: 'pointer', // Added cursor property
-    border: 'none', // Remove default button border
-    background: 'transparent', // Make button background transparent
+    cursor: 'pointer',
+    border: 'none',
+    background: 'transparent',
+    boxShadow: '0px 15px 30px rgba(0, 0, 0, 0.8)',
   };
 
   const pageSelected = (index) => {
     localStorage.setItem('GameType', names[index]);
     localStorage.setItem('points', 0);
+    localStorage.setItem('isHint', false);
     navigateTo('Game Details');
   };
 
   return (
-    <div style={pageStyle}>
       <div style={containerStyle}>
-        <h2 style={headingStyle}>Select a Game</h2>
+        <h2 style={headingStyle}>Choose the game category you want to play</h2>
         <div style={rowStyle}>
           {Object.keys(images).map((key, index) => (
             <div key={index} style={{ position: 'relative' }}>
@@ -78,7 +67,6 @@ function CategorySelection({ navigateTo }) {
                 style={{
                   ...buttonStyle,
                   backgroundImage: `url(${images[key]})`,
-                  backgroundColor: buttonColors[index],
                   borderRadius: '8px',
                   cursor: 'pointer',
                   display: 'inline-block',
@@ -86,14 +74,13 @@ function CategorySelection({ navigateTo }) {
                   backgroundPosition: 'center',
                 }}
               ></button>
-              <div style={{ textAlign: 'center', marginTop: '10px', color: '#fff' }}>
+              <div style={{ textAlign: 'center', marginTop: '10px', color: '#000', fontSize: 22, fontWeight: 800, }}>
                 {disNames[index]}
               </div>
             </div>
           ))}
         </div>
       </div>
-    </div>
   );
 }
 

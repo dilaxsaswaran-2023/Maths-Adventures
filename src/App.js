@@ -11,6 +11,9 @@ import CountingShapesGameAdv from './components/CountingShapesGameAdv';
 import Equations from './components/EquationsGame';
 import EquationsAdv from './components/EquationsGameAdv';
 
+import BG1 from './images/bgs/1.png';
+import BG2 from './images/bgs/2.png';
+
 function App() {
   const [currentPage, setCurrentPage] = useState('landing');
 
@@ -18,46 +21,39 @@ function App() {
     setCurrentPage(page);
   };
 
-  let pageContent;
+  const pageComponents = {
+    'landing': LandingPage,
+    'category-selection': CategorySelection,
+    'Game Details': NumberSenseDetails,
+    'NumberSense': NumberSenseGame,
+    'NumberSense-Adv': NumberSenseGameAdv,
+    'CountingShapes': CountingShapesGame,
+    'CountingShapes-Adv': CountingShapesGameAdv,
+    'Equations': Equations,
+    'Equations-Adv': EquationsAdv,
+    'feedback-screen': FeedbackScreen
+  };
 
-  switch (currentPage) {
-    case 'landing':
-      pageContent = <LandingPage navigateTo={navigateTo} />;
-      break;
-    case 'category-selection':
-      pageContent = <CategorySelection navigateTo={navigateTo} />;
-      break;
-    case 'Game Details':
-      pageContent = <NumberSenseDetails navigateTo={navigateTo} />;
-      break;
-    case 'NumberSense':
-      pageContent = <NumberSenseGame navigateTo={navigateTo} />;
-      break;
-    case 'NumberSense-Adv':
-      pageContent = <NumberSenseGameAdv navigateTo={navigateTo} />;
-      break;
-    case 'CountingShapes':
-      pageContent = <CountingShapesGame navigateTo={navigateTo}/>;
-      break;
-    case 'CountingShapes-Adv':
-        pageContent = <CountingShapesGameAdv navigateTo={navigateTo}/>;
-        break;
-    case 'Equations':
-        pageContent = <Equations navigateTo={navigateTo}/>;
-        break;
-    case 'Equations-Adv':
-          pageContent = <EquationsAdv navigateTo={navigateTo}/>;
-          break;
-    case 'feedback-screen':
-      pageContent = <FeedbackScreen navigateTo={navigateTo} />;
-      break;
-    default:
-      pageContent = <LandingPage navigateTo={navigateTo} />;
-  }
+  const pageStyle = {
+    backgroundImage: currentPage === 'landing' ? `url(${BG2})` : `url(${BG1})`,
+    backgroundSize: 'cover',
+    height: '100vh',
+    overflow: 'hidden',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 0,
+    padding: 0,
+  };
+
+  const PageComponent = pageComponents[currentPage] || LandingPage;
 
   return (
-    <div>
-      {pageContent}
+    <div style={pageStyle}>
+      <div>
+        <PageComponent navigateTo={navigateTo} />
+      </div>
     </div>
   );
 }

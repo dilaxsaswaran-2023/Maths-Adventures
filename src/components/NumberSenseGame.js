@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 function NumberSenseGame({ navigateTo }) {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);
-  const [showHints, setShowHints] = useState([]);
+  const [showHints, setShowHints] = useState(false);
   const [time, setTime] = useState(0);
   const [timerRunning, setTimerRunning] = useState(false);
 
@@ -19,7 +19,6 @@ function NumberSenseGame({ navigateTo }) {
   useEffect(() => {
     setQuestions(sampleQuestions);
     setAnswers(new Array(sampleQuestions.length).fill(''));
-    setShowHints(new Array(sampleQuestions.length).fill(false));
     startTimer();
   }, []);
 
@@ -43,10 +42,9 @@ function NumberSenseGame({ navigateTo }) {
     console.log(answers)
   };
 
-  const handleHintClick = (index) => {
-    const newShowHints = [...showHints];
-    newShowHints[index] = true;
-    setShowHints(newShowHints);
+  const handleHintClick = () => {
+    localStorage.setItem('isHint', true);
+    setShowHints(!showHints);
   };
 
   const checkAnswer = () => {
@@ -78,83 +76,79 @@ function NumberSenseGame({ navigateTo }) {
 
   const buttonStyle = {
     fontSize: '14px',
-    backgroundColor: '#FFD700',
+    backgroundColor: '#060c42',
+    color: '#fff',
     padding: '5px 10px',
     borderRadius: '5px',
     cursor: 'pointer',
     marginLeft: '10px'
   };
 
-  const pageStyle = {
-    backgroundColor: '#205d76',
-    minHeight: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-  };
-
   const containerStyle = {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center', 
-    padding: '30px',
-    width: 'calc(100vw - 300px)',
-    height: 'calc(100vh - 300px)',
-    fontFamily: 'Comic Sans MS, cursive',
-    background: 'linear-gradient(45deg, #060c42, #ffa09e)',
-    borderRadius: '10px',
+    padding: '10px',
     margin: 'auto',
-    boxShadow: '0px 15px 30px rgba(0, 0, 0, 0.8)',
+    width: 'calc(100vw - 800px)',
+    height: 'calc(100vh - 200px)',
+    fontFamily: 'Comic Sans MS, cursive',
+    borderRadius: '10px',
+    boxShadow: '0px 15px 30px rgba(0, 0, 0, 0.6)'
   };
   
   const innerDivStyle = {
     display: 'flex',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    justifyContent: 'center', 
+    flexDirection: 'column',
+    justifyContent: 'left', 
   };
 
   const inputStyle = {
     height: 'calc(1.8vw)',
     width: 'calc(4.2vw)',
     marginRight: '10px',
-    marginLeft: '10px',
-    background: 'linear-gradient(to right, #53b2cf, #73917f)',
+    marginLeft: '30px',
+    background: 'transparent',
     border: '1.5px solid #111',
-    borderRadius: '5px',
+    borderRadius: '3px',
     boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.1)',
     textAlign: 'center',
   };
 
   const hintButtonStyle = {
-    ...buttonStyle,
-    fontSize: '12px',
-    marginRight: '10px',
-    backgroundColor: '#04d627',
+    fontSize: '14px',
+    fontWeight: 600,
+    padding: '5px 10px',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    backgroundColor: 'transparent',
+    marginLeft: '300px',
+    color: '#060c42',
   };
 
   return (
-    <div style={pageStyle}>
       <div style={containerStyle}>
-        <h2 style={{color: '#ddd', fontSize: 30,}}>Number Sense Game - Level 1</h2>
-        <p style={{fontSize: 20, fontWeight: 900, marginTop: '-20px'}}>Type the number in the boxes!</p>
+        <h2 style={{color: '#000', fontSize: 30, alignSelf: 'center', marginTop: '10px'}}>Number Sense Game - Level 1</h2>
+        <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: '-30px'}}>
+          <p style={{fontSize: 20, fontWeight: 900, marginLeft: '20px'}}>Write the numbers in the boxes</p>
+          <button onClick={() => handleHintClick()} style={hintButtonStyle}>Hint !</button>
+        </div>
+        
         <div style={innerDivStyle}>
           {questions.map((question, index) => (
-            <div key={question.id} style={{ display: 'flex', alignItems: 'center', margin: '0px 30px 30px' }}>
-              <p style={{fontSize: 18, fontWeight: 900}}>{question.question}</p>
+            <div key={question.id} style={{ display: 'flex', alignItems: 'center', marginLeft: '60px' }}>
+              <p style={{fontSize: 18, fontWeight: 900}}>{index+1}. {question.question}</p>
               <input type="text" value={answers[index]} onChange={(e) => handleAnswerChange(e, index)} style={inputStyle} />
               {/* <button onClick={() => checkAnswer(index)} style={buttonStyle}>Done</button> */}
-              <button onClick={() => handleHintClick(index)} style={hintButtonStyle}>Hint !</button>
-              {showHints[index] && <p>{question.answer}</p>}
+              {showHints && <p>{question.answer}</p>}
             </div>
           ))}
         </div>
-        <button onClick={endGame} style={buttonStyle}>End Game</button>
-        <p>Time: {time} seconds</p>
+        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center',}}>
+          <button onClick={endGame} style={buttonStyle} onMouseEnter={(e) => e.target.style.backgroundColor = '#FFC107'}
+          onMouseLeave={(e) => e.target.style.backgroundColor = '#060c42'}>Done</button>
+          <p>Time: {time} seconds</p>
+        </div>
       </div>
-    </div>
   );
 }
 

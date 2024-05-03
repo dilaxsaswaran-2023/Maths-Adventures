@@ -6,10 +6,10 @@ import Seven from '../images/CountingGameL2/7.png';
 import Eleven from '../images/CountingGameL2/11.png';
 import Thirteen from '../images/CountingGameL2/13.png';
 
-function CountingShapesGame({ navigateTo }) {
+function CountingShapesGameAdv({ navigateTo }) {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);
-  const [showHints, setShowHints] = useState([]);
+  const [showHints, setShowHints] = useState(false);
   const [time, setTime] = useState(0);
   const [timerRunning, setTimerRunning] = useState(false);
 
@@ -25,7 +25,6 @@ function CountingShapesGame({ navigateTo }) {
   useEffect(() => {
     setQuestions(sampleQuestions);
     setAnswers(new Array(sampleQuestions.length).fill(''));
-    setShowHints(new Array(sampleQuestions.length).fill(false));
     startTimer();
   }, []);
 
@@ -48,10 +47,9 @@ function CountingShapesGame({ navigateTo }) {
     setAnswers(newAnswers);
   };
 
-  const handleHintClick = (index) => {
-    const newShowHints = [...showHints];
-    newShowHints[index] = true;
-    setShowHints(newShowHints);
+  const handleHintClick = () => {
+    localStorage.setItem('isHint', true);
+    setShowHints(!showHints);
   };
 
   const checkAnswer = () => {
@@ -72,50 +70,36 @@ function CountingShapesGame({ navigateTo }) {
 
   const terminate = (marks) => {
     localStorage.setItem('correctAnswers', marks);
-    let oldPoints = 0
-    oldPoints = localStorage.getItem('points');
-    let newPoints = 0
-    newPoints = Math.floor((marks * 10) - (time / 6));
-    newPoints = parseInt(oldPoints) + parseInt(newPoints);
-    if (newPoints < 0) {
-      newPoints = 0;
+    let points = 0
+    points = Math.floor((marks * 10) - (time / 6));
+    if (points < 0) {
+      points = 0;
     }
-    localStorage.setItem('points', newPoints);
+    localStorage.setItem('points', points);
     localStorage.setItem('time', time);
     navigateTo('feedback-screen');
   };
 
   const buttonStyle = {
     fontSize: '14px',
-    backgroundColor: '#FFD700',
+    backgroundColor: '#060c42',
+    color: '#fff',
     padding: '5px 10px',
     borderRadius: '5px',
     cursor: 'pointer',
-    marginLeft: '10px',
-  };
-
-  const pageStyle = {
-    backgroundColor: '#205d76',
-    minHeight: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
+    marginLeft: '10px'
   };
 
   const containerStyle = {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center', 
-    padding: '30px',
-    width: 'calc(100vw - 300px)',
-    height: 'calc(100vh - 300px)',
-    fontFamily: 'Comic Sans MS, cursive',
-    background: 'linear-gradient(45deg, #060c42, #ffa09e)',
-    borderRadius: '10px',
+    padding: '10px',
     margin: 'auto',
-    boxShadow: '0px 15px 30px rgba(0, 0, 0, 0.8)',
+    width: 'calc(100vw - 400px)',
+    height: 'calc(100vh - 140px)',
+    fontFamily: 'Comic Sans MS, cursive',
+    borderRadius: '10px',
+    boxShadow: '0px 15px 30px rgba(0, 0, 0, 0.6)'
   };
   
   const innerDivStyle = {
@@ -129,49 +113,54 @@ function CountingShapesGame({ navigateTo }) {
     height: 'calc(1.8vw)',
     width: 'calc(4.2vw)',
     marginRight: '10px',
-    marginLeft: '10px',
-    background: 'linear-gradient(to right, #53b2cf, #73917f)',
+    marginLeft: '30px',
+    background: 'transparent',
     border: '1.5px solid #111',
-    borderRadius: '5px',
+    borderRadius: '3px',
     boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.1)',
     textAlign: 'center',
   };
-
   const hintButtonStyle = {
-    ...buttonStyle,
-    fontSize: '12px',
-    marginRight: '10px',
-    backgroundColor: '#04d627',
+    fontSize: '14px',
+    fontWeight: 600,
+    padding: '5px 10px',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    backgroundColor: 'transparent',
+    marginLeft: '700px',
+    color: '#060c42',
   };
 
   const imageStyle = {
-    width: '200px',
-    height: '140px',
-    marginRight: '20px',
-    marginBottom: '5px',
-    marginLeft: '30px'
+    width: '180px',
+    height: '160px',
+    marginRight: '10px',
+    marginBottom: '5px'
   };
 
   return (
-    <div style={pageStyle}>
       <div style={containerStyle}>
-			<h2 style={{color: '#ddd', fontSize: 30}}>Counting Shapes Game - Level 2</h2>
-			<p style={{ fontSize: 20, fontWeight: 900, marginTop: '-30px' }}>Count the shapes:</p>
+			<h2 style={{color: '#000', fontSize: 30, alignSelf: 'center', marginTop: '10px'}}>Counting Shapes Game - Level 2</h2>
+			<div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: '-30px'}}>
+          <p style={{fontSize: 20, fontWeight: 900, marginLeft: '20px'}}>Write the numbers in the boxes</p>
+          <button onClick={() => handleHintClick()} style={hintButtonStyle}>Hint !</button>
+      </div>
         <div style={innerDivStyle}>
           {questions.map((question, index) => (
-            <div key={question.id} style={{ display: 'flex', alignItems: 'center', margin: '0px 0px 0px' }}>
+            <div key={question.id} style={{ display: 'flex', alignItems: 'center', marginLeft: '60px' }}>
               <img src={question.image} alt={`Question ${index + 1}`} style={imageStyle} />
               <input type="text" value={answers[index]} onChange={(e) => handleAnswerChange(e, index)} style={inputStyle} />
-              <button onClick={() => handleHintClick(index)} style={hintButtonStyle}>Hint !</button>
-              {showHints[index] && <p>{question.answer}</p>}
+              {showHints && <p>{question.answer}</p>}
             </div>
           ))}
         </div>
-        <button onClick={endGame} style={buttonStyle}>End Game</button>
-        <p>Time: {time} seconds</p>
+        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '20px'}}>
+          <button onClick={endGame} style={buttonStyle} onMouseEnter={(e) => e.target.style.backgroundColor = '#FFC107'}
+          onMouseLeave={(e) => e.target.style.backgroundColor = '#060c42'}>Done</button>
+          <p>Time: {time} seconds</p>
+        </div>
       </div>
-    </div>
   );
 }
 
-export default CountingShapesGame;
+export default CountingShapesGameAdv;

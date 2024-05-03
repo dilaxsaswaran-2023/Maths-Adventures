@@ -5,20 +5,18 @@ const containerStyle = {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  justifyContent: 'center',
   padding: '30px',
-  width: 'calc(100vw - 300px)',
-  height: 'calc(100vh - 300px)',
-  fontFamily: 'Comic Sans MS, cursive',
-  background: 'linear-gradient(45deg, #060c42, #ffa09e)',
-  borderRadius: '10px',
   margin: 'auto',
-  boxShadow: '0px 15px 30px rgba(0, 0, 0, 0.8)',
+  width: 'calc(100vw - 1000px)',
+  height: 'calc(100vh - 400px)',
+  fontFamily: 'Comic Sans MS, cursive',
+  borderRadius: '10px',
+  background: 'transparent',
 };
 
 const headingStyle = {
-  fontSize: 'calc(5vmin)',
-  color: '#fff',
+  fontSize: 'calc(7vmin)',
+  color: '#000',
 };
 
 const descriptionStyle = {
@@ -70,7 +68,6 @@ function NumberSenseDetails({ navigateTo }) {
   }
 
   return (
-    <div style={pageStyle}>
       <div style={containerStyle}>
         <h2 style={headingStyle}>{gameType[localStorage.getItem('GameType')]} Game</h2>
         <p style={descriptionStyle}>Description: {Descriptions[localStorage.getItem('GameType')]}</p>
@@ -83,7 +80,6 @@ function NumberSenseDetails({ navigateTo }) {
           Let's Play
         </button>
       </div>
-    </div>
   );
 
 }
